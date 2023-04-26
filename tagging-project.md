@@ -57,4 +57,7 @@ Start with the GUI - will inform us what endpoint functions we need in the API
     > Learn how to use
     > Set up modules, submodules, et cetera.
     > Do we want to use Qt Design Studio? or implement by hand?
-    >
+
+## Requirements
+
+> pip freeze
