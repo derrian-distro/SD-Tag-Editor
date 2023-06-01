@@ -46,18 +46,35 @@ We set up al lthe code so there's a specific library of functions that do all of
 Someone could make a Gradio interface if they would like
 Developers can use our tagger without needing to understand it
 
->Set up environment for PyQt6
+>Set up environment for PySide6
 
 Start with the GUI - will inform us what endpoint functions we need in the API
     GUI and API are separate repos
 
 ## Steps
 
-> Set up PyQt6
+> Set up PySide6
     > Learn how to use
     > Set up modules, submodules, et cetera.
-    > Do we want to use Qt Design Studio? or implement by hand?
+    > Do we want to use Qt Design Studio? or implement by hand? **QT Creator**
+    
+> Figure out our pre-run steps
+    > DLing tagger
+        >.onnx -> requires onnx dependencies & model DL
+            >moatv2, convnextv2-v2, swinv2, vitv2
+            >model DL will use `from huggingface_hub import hf_hub_download`
+            >Build onnxruntime-gpu with rocm for AMD
 
 ## Requirements
 
 > pip freeze
+> list of things to install:
+    > PySide6==6.5.0
+    > qt-material
+    > onnxruntime, onnxruntime-gpu (onnxruntime is for arm cpu/macos)
+        >if AMD, check if ROCm version is 5.4 (tentatively - confirm whether SD uses 5.4 normally)
+    > huggingface-hub
+    > pillow (image conversion for tagging), possibly for displaying images as well, I don't remember if PySide6 handles images well
+        >cv2
+    >pandas
+    >numpy

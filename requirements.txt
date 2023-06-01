@@ -1,0 +1,8 @@
+PySide6==6.5.0
+qt-material==2.14
+onnxruntime-gpu==1.15.0
+huggingface-hub==0.15.1
+pillow==9.5.0
+cv2
+numpy
+pandas
