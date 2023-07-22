@@ -59,14 +59,14 @@ Every section has subsections broken out as necessary
         "body trait": { (descending downward through the groups until we hit square brackets)
             "injury": {
                 "type": [
-                    <removed*
+                    <removed for clarity>
                 ],
                 "scar": [
-                    <removed*
+                    <removed for clarity>
                 ]
-                <removed*
+                <removed for clarity>
             },
-            <removed*
+            <removed for clarity>
         },
         ```
 

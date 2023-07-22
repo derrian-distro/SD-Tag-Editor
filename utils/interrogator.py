@@ -1,18 +1,19 @@
-from typing import Any
 
-import torch
+
+import torch #?
 import pandas as pd
 import numpy as np
 import os
+import onnxruntime as ort
+import json
+
+
+from huggingface_hub.file_download import hf_hub_download
+from PIL import Image
+from typing import Any, Union
 from utils import dbimutils
 from repos import DEFAULT_REPOS
-import json
 from pathlib import Path
-
-from huggingface_hub import hf_hub_download
-from PIL import Image
-import onnxruntime as ort
-
 
 class Interrogator:
     def __init__(
@@ -64,24 +65,56 @@ class Interrogator:
         print("loading tags")
         return tag_names, rating_indexes, character_indexes, general_indexes
 
-    def find_groups(self, labels: dict) -> dict:
+    def find_groups(self, tags: dict) -> dict:
         """
         Finds the groups that the tags belong to, returns a dict with k=group, v=list of tuple of (tag, probability)
 
-        labels: dict of labels (k=tag, v=probability)
+        tags: dict of tags (k=tag, v=probability)
         """
-
         associated_tag_groups = {}
 
-        # from TAG_GROUPS, create a dict of tag groups and their associated tags, each group is a key, within each key is a tuple of (tag, probability)
-        for group in self.tag_groups.keys():
-            for tag in self.tag_groups[group]:
-                if tag in labels:
-                    # append as a list of tuples
-                    associated_tag_groups.setdefault(group, []).append(
-                        (tag, labels[tag])
-                    )
+        def depth_search(tag: str, tag_group: Union[dict, list] = self.tag_groups):
+            if isinstance(tag_group, dict):
+                for group in tag_group.keys():
+                    tag_found = depth_search(tag, tag_group[group])
+                    if not tag_found:
+                        continue
+                    if isinstance(tag_found, bool):
+                        return {group : tag}
+                    return {group: tag_found}
+                return False
+            return tag in tag_group
+
+        for tag in tags.keys():
+            tag_group = depth_search(tag)
+            # print(tag_group)
+            if isinstance(tag_group, bool):
+                if 'other' not in associated_tag_groups:
+                    associated_tag_groups['other'] = []
+                    associated_tag_groups['other'].append(tag)
+                continue
+            
+            group_type: Union[dict, str] = tag_group
+
+            current_group = associated_tag_groups
+
+            while isinstance(group_type, dict):
+                #group_type.keys() will only ever have one key
+                group = list(group_type.keys())[0]
+                if group not in current_group:
+                    current_group[group] = {} if isinstance(group_type[group], dict) else []
+                current_group = current_group[group]
+                group_type = group_type[group]
+            #append as dict, truncate to 6 decimals on tags[tag]
+            current_group.append({group_type: round(tags[tag], 6)})
+        
+
         return associated_tag_groups
+
+        # for group in self.tag_groups.keys():
+        #     if isinstance(self.tag_groups[group], dict):
+        #         for sub_group in self.tag_groups[group]:
+        #             self.find_groups(sub_group)
 
     def interrogate_folder(
         self,
@@ -157,24 +190,28 @@ class Interrogator:
         new_image = Image.new("RGBA", image.size, "WHITE")
         new_image.paste(image, mask=image)
         image = new_image.convert("RGB")
-        image = np.asarray(image)
+        image = np.asarray(image) # type: ignore
 
         # PIL RGB to OpenCV BGR
-        image = image[:, :, ::-1]
+        image = image[:, :, ::-1]  # type: ignore
 
         image = dbimutils.make_square(image, height)
         image = dbimutils.smart_resize(image, height)
-        image = image.astype(np.float32)
-        image = np.expand_dims(image, 0)
+        image = image.astype(np.float32)  # type: ignore
+        image = np.expand_dims(image, 0)  # type: ignore
 
         input_name = model.get_inputs()[0].name
         label_name = model.get_outputs()[0].name
 
         probabilities = model.run([label_name], {input_name: image})[0]
+        
 
         labels = list(
             zip(tag_names, probabilities[0].astype(float))
-        )  # a list of tuples of the tag name and the confidence
+        )
+        for i in range(len(labels)):
+            labels[i] = (labels[i][0].replace("_", " "), labels[i][1])
+
         rating_names = [labels[i] for i in rating_indexes]
         rating_res = list(rating_names)
 
@@ -184,7 +221,8 @@ class Interrogator:
         character_names = [labels[i] for i in character_indexes]
         character_res = [x for x in character_names if x[1] > character_threshold]
         full_tags = dict(general_res + character_res)
-        full_tags = self.find_groups(full_tags)
+        full_tags = self.find_groups(full_tags)     
+
         return rating_res, full_tags
 
 
