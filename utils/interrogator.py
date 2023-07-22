@@ -1,6 +1,4 @@
-
-
-import torch #?
+import torch  # ?
 import pandas as pd
 import numpy as np
 import os
@@ -14,6 +12,7 @@ from typing import Any, Union
 from utils import dbimutils
 from repos import DEFAULT_REPOS
 from pathlib import Path
+
 
 class Interrogator:
     def __init__(
@@ -73,48 +72,44 @@ class Interrogator:
         """
         associated_tag_groups = {}
 
-        def depth_search(tag: str, tag_group: Union[dict, list] = self.tag_groups):
-            if isinstance(tag_group, dict):
-                for group in tag_group.keys():
-                    tag_found = depth_search(tag, tag_group[group])
-                    if not tag_found:
-                        continue
-                    if isinstance(tag_found, bool):
-                        return {group : tag}
-                    return {group: tag_found}
-                return False
-            return tag in tag_group
+        def depth_search(tag: str, tag_group: Union[dict, list]):
+            if not isinstance(tag_group, dict):
+                return tag in tag_group
 
-        for tag in tags.keys():
-            tag_group = depth_search(tag)
+            for group in tag_group.keys():
+                if tag_found := depth_search(tag, tag_group[group]):
+                    return (
+                        {group: tag}
+                        if isinstance(tag_found, bool)
+                        else {group: tag_found}
+                    )
+            return False
+
+        for tag, value in tags.items():
+            tag_group = depth_search(tag, self.tag_groups)
             # print(tag_group)
             if isinstance(tag_group, bool):
-                if 'other' not in associated_tag_groups:
-                    associated_tag_groups['other'] = []
-                    associated_tag_groups['other'].append(tag)
+                if "other" not in associated_tag_groups:
+                    associated_tag_groups["other"] = [tag]
                 continue
-            
+
             group_type: Union[dict, str] = tag_group
 
             current_group = associated_tag_groups
 
             while isinstance(group_type, dict):
-                #group_type.keys() will only ever have one key
+                # group_type.keys() will only ever have one key
                 group = list(group_type.keys())[0]
                 if group not in current_group:
-                    current_group[group] = {} if isinstance(group_type[group], dict) else []
+                    current_group[group] = (
+                        {} if isinstance(group_type[group], dict) else []
+                    )
                 current_group = current_group[group]
                 group_type = group_type[group]
-            #append as dict, truncate to 6 decimals on tags[tag]
-            current_group.append({group_type: round(tags[tag], 6)})
-        
+            # append as dict, truncate to 6 decimals on tags[tag]
+            current_group.append({group_type: round(value, 6)})
 
         return associated_tag_groups
-
-        # for group in self.tag_groups.keys():
-        #     if isinstance(self.tag_groups[group], dict):
-        #         for sub_group in self.tag_groups[group]:
-        #             self.find_groups(sub_group)
 
     def interrogate_folder(
         self,
@@ -190,7 +185,7 @@ class Interrogator:
         new_image = Image.new("RGBA", image.size, "WHITE")
         new_image.paste(image, mask=image)
         image = new_image.convert("RGB")
-        image = np.asarray(image) # type: ignore
+        image = np.asarray(image)  # type: ignore
 
         # PIL RGB to OpenCV BGR
         image = image[:, :, ::-1]  # type: ignore
@@ -204,11 +199,8 @@ class Interrogator:
         label_name = model.get_outputs()[0].name
 
         probabilities = model.run([label_name], {input_name: image})[0]
-        
 
-        labels = list(
-            zip(tag_names, probabilities[0].astype(float))
-        )
+        labels = list(zip(tag_names, probabilities[0].astype(float)))
         for i in range(len(labels)):
             labels[i] = (labels[i][0].replace("_", " "), labels[i][1])
 
@@ -221,7 +213,7 @@ class Interrogator:
         character_names = [labels[i] for i in character_indexes]
         character_res = [x for x in character_names if x[1] > character_threshold]
         full_tags = dict(general_res + character_res)
-        full_tags = self.find_groups(full_tags)     
+        full_tags = self.find_groups(full_tags)
 
         return rating_res, full_tags
 
