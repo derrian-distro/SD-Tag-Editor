@@ -1,10 +1,10 @@
 def prune_tags(tag_group: dict, base_tag: str = None) -> dict:
     for key in tag_group:
         if isinstance(tag_group[key], dict):
-            if key == "modifier":
-                return tag_group
             prune_tags(tag_group[key], base_tag if key == "base" else key)
         elif len(tag_group[key]) > 1:
+            if key in ["other", "modifier", "character", "nudity"]:
+                continue
             sorted_array = sorted(
                 tag_group[key], key=lambda x: list(x.values())[0], reverse=True
             )

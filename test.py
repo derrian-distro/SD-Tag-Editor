@@ -9,11 +9,18 @@ def main():
     inter = Interrogator()
     folder = input("folder containing images: ")
     image_tags = inter.interrogate_folder(folder, "moat", 0.35, 0.75, True)
+
+    with open("test_unpruned.json", "w") as f:
+        json.dump(image_tags, f, indent=2)
+
+    # with open("test_unpruned.json", "r") as f:
+    #     image_tags = json.load(f)
+
     for value in image_tags.values():
         value = (value[0], value[1], prune_tags(value[2]))
 
     with open("test.json", "w") as f:
-        json.dump(image_tags, f, indent=4)
+        json.dump(image_tags, f, indent=2)
 
 
 if __name__ == "__main__":

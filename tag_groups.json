@@ -154,7 +154,6 @@
       "behind another",
       "facing another",
       "animal focus",
-      "solo",
       "ass focus",
       "back focus",
       "breast focus",
@@ -334,6 +333,7 @@
       "crotch"
     ],
     "group": [
+      "solo",
       "everyone",
       "1boy",
       "1girl",
@@ -406,7 +406,7 @@
         "sepia",
         "spot color"
       ],
-      "censorship": [
+      "censored": [
         "bar censor",
         "censored",
         "censored nipples",
@@ -730,6 +730,7 @@
         "grey sky"
       ],
       "modifier": [
+        "contrail",
         "shooting star",
         "crescent moon",
         "moon",
@@ -1703,7 +1704,7 @@
         "tablecloth"
       ],
       "school": ["school chair", "school desk", "chalkboard"],
-      "plush": [
+      "stuffed toy": [
         "stuffed animal",
         "stuffed bunny",
         "stuffed cat",
@@ -1873,7 +1874,6 @@
       "railing",
       "red gemstone",
       "red rope",
-      "rocket",
       "rolling suitcase",
       "round-bottom flask",
       "rubber duck",
@@ -2017,19 +2017,13 @@
           "silver dress",
           "blue dress",
           "pink dress",
+          "robe",
           "white robe",
           "black robe"
         ],
-        "type": [
-          "open robe",
-          "robe",
+        "other": [
           "striped dress",
           "vertical-striped dress",
-          "sundress",
-          "tube dress",
-          "microdress"
-        ],
-        "other": [
           "taut dress",
           "tight dress",
           "fur-trimmed dress",
@@ -2037,6 +2031,10 @@
           "ribbon-trimmed dress"
         ],
         "modifier": [
+          "microdress",
+          "open robe",
+          "sundress",
+          "tube dress",
           "backless dress",
           "checkered dress",
           "china dress",
@@ -2729,6 +2727,7 @@
       },
       "collar": {
         "base": [
+          "sailor collar",
           "blue sailor collar",
           "pink sailor collar",
           "orange sailor collar",
@@ -2748,8 +2747,7 @@
           "frilled sailor collar",
           "fur collar",
           "ribbon-trimmed collar",
-          "mandarin collar",
-          "sailor collar"
+          "mandarin collar"
         ]
       },
       "neckerchief": [
@@ -2825,12 +2823,14 @@
           "beltbra"
         ]
       },
+      "camisole": [
+        "camisole",
+        "pink camisole",
+        "white camisole",
+        "black camisole"
+      ],
       "crop top": {
         "base": [
-          "camisole",
-          "pink camisole",
-          "white camisole",
-          "black camisole",
           "crop top",
           "black tank top",
           "blue tank top",
@@ -3092,6 +3092,8 @@
         },
         "pantyhose": {
           "base": [
+            "leggings",
+            "black leggings",
             "pantyhose",
             "black pantyhose",
             "green pantyhose",
@@ -3106,6 +3108,7 @@
             "white pantyhose"
           ],
           "modifier": [
+            "gusset",
             "pantyhose under shorts",
             "thighband pantyhose",
             "single leg pantyhose",
@@ -3141,22 +3144,35 @@
             "single thighhigh"
           ]
         },
-        "garter": [
-          "garter straps",
-          "garter belt",
-          "black garter belt",
-          "black garter straps"
-        ],
-        "other": [
-          "leggings",
-          "leg warmers",
-          "over-kneehighs",
-          "kneehighs",
-          "gusset",
-          "highleg"
-        ]
+        "socks": {
+          "base": [
+            "socks",
+            "green socks",
+            "grey socks",
+            "black socks",
+            "blue socks",
+            "brown socks",
+            "pink socks",
+            "purple socks",
+            "red socks",
+            "white socks",
+            "yellow socks"
+          ],
+          "modifier": [
+            "tabi",
+            "ankle socks",
+            "bobby socks",
+            "loose socks",
+            "frilled socks",
+            "striped socks",
+            "single kneehigh",
+            "single sock"
+          ]
+        },
+        "other": ["leg warmers", "over-kneehighs", "kneehighs", "highleg"]
       },
       "other": [
+        "zettai ryouiki",
         "open fly",
         "petticoat",
         "loincloth",
@@ -3167,8 +3183,7 @@
         "shorts under dress",
         "bike shorts under shorts",
         "underbutt",
-        "upshorts",
-        "black leggings"
+        "upshorts"
       ]
     },
     "foot": {
@@ -3202,31 +3217,6 @@
         ]
       },
       "slippers": ["slippers", "animal slippers", "ballet slippers"],
-      "socks": {
-        "base": [
-          "socks",
-          "green socks",
-          "grey socks",
-          "black socks",
-          "blue socks",
-          "brown socks",
-          "pink socks",
-          "purple socks",
-          "red socks",
-          "white socks",
-          "yellow socks"
-        ],
-        "modifier": [
-          "tabi",
-          "ankle socks",
-          "bobby socks",
-          "loose socks",
-          "frilled socks",
-          "striped socks",
-          "single kneehigh",
-          "single sock"
-        ]
-      },
       "boots": [
         "belt boots",
         "combat boots",
@@ -3284,6 +3274,10 @@
     },
     "accessory": {
       "garter": [
+        "garter straps",
+        "garter belt",
+        "black garter belt",
+        "black garter straps",
         "sleeve garter",
         "arm garter",
         "legwear garter",
@@ -3418,7 +3412,6 @@
         "other": [
           "neck ruff",
           "neck ribbon",
-          "shawl",
           "aiguillette",
           "belt pouch",
           "utility belt",
@@ -3724,6 +3717,7 @@
       ],
       "cape": {
         "base": [
+          "shawl",
           "cape",
           "surcoat",
           "blue cape",
@@ -3962,6 +3956,7 @@
         "tail ring"
       ],
       "other": [
+        "rigging",
         "ankle cuffs",
         "tie clip",
         "zipper",
@@ -4205,6 +4200,7 @@
         "black headband"
       ],
       "other": [
+        "hood down",
         "sweatband",
         "nejiri hachimaki",
         "helm",
@@ -4385,6 +4381,7 @@
       "cutout above navel"
     ],
     "pattern and print": [
+      "see-through",
       "cat print",
       "animal print",
       "butterfly print",
@@ -4761,31 +4758,33 @@
             "white eyes",
             "yellow eyes"
           ],
-          "pupil": [
-            "heart in eye",
-            "star in eye",
-            "symbol in eye",
-            "slit pupils",
-            "blue pupils",
-            "bright pupils",
-            "bunny-shaped pupils",
-            "constricted pupils",
-            "cross-shaped pupils",
-            "diamond-shaped pupils",
-            "flower-shaped pupils",
-            "heart-shaped pupils",
-            "horizontal pupils",
-            "mismatched pupils",
-            "no pupils",
-            "pink pupils",
-            "red pupils",
-            "solid circle pupils",
-            "star-shaped pupils",
-            "symbol-shaped pupils",
-            "white pupils",
-            "x-shaped pupils",
-            "yellow pupils"
-          ],
+          "pupil": {
+            "symbol-shaped pupils": [
+              "star-shaped pupils",
+              "symbol-shaped pupils",
+              "cross-shaped pupils",
+              "diamond-shaped pupils",
+              "flower-shaped pupils",
+              "heart-shaped pupils",
+              "bunny-shaped pupils",
+              "x-shaped pupils"
+            ],
+            "symbol in eye": ["heart in eye", "star in eye", "symbol in eye"],
+            "other": [
+              "slit pupils",
+              "blue pupils",
+              "bright pupils",
+              "constricted pupils",
+              "horizontal pupils",
+              "mismatched pupils",
+              "no pupils",
+              "pink pupils",
+              "red pupils",
+              "solid circle pupils",
+              "white pupils",
+              "yellow pupils"
+            ]
+          },
           "sclera": [
             "black sclera",
             "blue sclera",
@@ -4825,8 +4824,6 @@
             "third eye",
             "tsurime",
             "wince",
-            "x3",
-            "xd",
             "red eyeliner"
           ],
           "unique eye feature": [
@@ -4852,7 +4849,7 @@
           ],
           "eyelashes": ["colored eyelashes", "eyelashes", "long eyelashes"]
         },
-        "ear": {
+        "animal ears": {
           "base": [
             "owl ears",
             "panda ears",
@@ -4962,7 +4959,7 @@
               "single braid",
               "twin braids"
             ],
-            "buns": [
+            "hair bun": [
               "braided bun",
               "cone hair bun",
               "double bun",
@@ -4973,7 +4970,7 @@
               "single hair ring",
               "single side bun"
             ],
-            "updos": [
+            "updo": [
               "half updo",
               "low-tied long hair",
               "multi-tied hair",
@@ -4981,7 +4978,7 @@
               "two side up",
               "updo"
             ],
-            "ponytails": [
+            "ponytail": [
               "folded ponytail",
               "front ponytail",
               "high ponytail",
@@ -4994,22 +4991,24 @@
               "wide ponytail",
               "braided ponytail"
             ],
+            "twintails": [
+              "low twintails",
+              "short twintails",
+              "quad tails",
+              "tri tails",
+              "twintails",
+              "uneven twintails",
+              "twin drills"
+            ],
             "other styles": [
               "short hair with long locks",
               "afro",
               "drill hair",
-              "low twintails",
               "shower head",
               "pompadour",
-              "quad tails",
               "ringlets",
-              "short twintails",
               "side drill",
-              "topknot",
-              "tri tails",
-              "twin drills",
-              "twintails",
-              "uneven twintails"
+              "topknot"
             ],
             "bangs": [
               "asymmetrical bangs",
@@ -5027,7 +5026,7 @@
               "parted bangs",
               "swept bangs"
             ],
-            "special feature": [
+            "other": [
               "folded hair",
               "parted hair",
               "expressive hair",
@@ -5078,10 +5077,11 @@
               "tentacle hair",
               "wavy hair",
               "wet hair",
-              "enpera"
+              "enpera",
+              "cowlick",
+              "drill locks"
             ]
-          },
-          "other hair": ["cowlick", "drill locks"]
+          }
         },
         "facial hair": [
           "sideburns",
@@ -5263,7 +5263,6 @@
       "wings": {
         "wing types": [
           "angel wings",
-          "asymmetrical wings",
           "mechanical wings",
           "bat wings",
           "bird wings",
@@ -5272,21 +5271,10 @@
           "dragon wings",
           "energy wings",
           "fairy wings",
-          "fake wings",
-          "feathered wings",
-          "glowing wings",
-          "head wings",
           "ice wings",
-          "insect wings",
-          "large wings",
-          "detached wings",
-          "low wings",
-          "mini wings",
-          "multiple wings",
-          "single wing",
-          "transparent wings"
+          "insect wings"
         ],
-        "wing color": [
+        "base": [
           "wings",
           "black wings",
           "blue wings",
@@ -5300,6 +5288,20 @@
           "multicolored wings",
           "purple wings"
         ],
+        "modifier": [
+          "asymmetrical wings",
+          "fake wings",
+          "glowing wings",
+          "feathered wings",
+          "large wings",
+          "detached wings",
+          "low wings",
+          "mini wings",
+          "multiple wings",
+          "single wing",
+          "transparent wings",
+          "head wings"
+        ],
         "other": ["winged arms", "spread wings"]
       }
     },
@@ -5311,45 +5313,25 @@
         "flat ass",
         "huge ass"
       ],
-      "leg": [
-        "soles",
-        "dirty feet",
-        "thick thighs",
-        "thighs",
-        "toes",
-        "animal feet",
-        "kneepits",
-        "knees",
-        "thigh gap",
+      "thighs": ["thighs", "thick thighs"],
+      "feet": ["animal feet", "hooves"],
+      "legs": [
         "legs",
         "multiple legs",
-        "leg hair",
         "bird legs",
         "mechanical legs",
         "long legs",
-        "slim legs",
-        "hooves"
+        "slim legs"
       ],
       "tail": {
         "base": [
           "tail",
-          "tail feathers",
           "white tail",
           "green tail",
           "black tail",
           "brown tail",
           "purple tail",
-          "multiple tails",
           "red tail",
-          "striped tail",
-          "fake tail",
-          "heart tail",
-          "prehensile tail",
-          "spiked tail",
-          "large tail",
-          "tail between legs"
-        ],
-        "modifier": [
           "cat tail",
           "dog tail",
           "bear tail",
@@ -5367,8 +5349,6 @@
           "leopard tail",
           "lion tail",
           "lizard tail",
-          "long tail",
-          "mechanical tail",
           "monkey tail",
           "mouse tail",
           "rabbit tail",
@@ -5378,15 +5358,35 @@
           "squirrel tail",
           "tapir tail",
           "tiger tail",
-          "wolf tail",
+          "wolf tail"
+        ],
+        "modifier": [
+          "striped tail",
+          "fake tail",
+          "prehensile tail",
+          "multiple tails",
+          "heart tail",
+          "spiked tail",
+          "tail between legs",
+          "large tail",
+          "long tail",
+          "mechanical tail",
           "two tails"
         ]
       },
       "other": [
+        "tail feathers",
         "tail through clothes",
         "hip bones",
         "prosthetic leg",
-        "groin tendon"
+        "groin tendon",
+        "dirty feet",
+        "soles",
+        "toes",
+        "kneepits",
+        "knees",
+        "thigh gap",
+        "leg hair"
       ]
     },
     "skin": [
@@ -5445,6 +5445,7 @@
         "wolf girl"
       ],
       "boy": [
+        "cow boy",
         "cat boy",
         "demon boy",
         "dog boy",
@@ -5555,86 +5556,93 @@
     ]
   },
   "nsfw": {
-    "nudity": [
-      "wardrobe error",
-      "wardrobe malfunction",
-      "areola slip",
-      "breast slip",
-      "breasts out",
-      "bursting breasts",
-      "nipple slip",
-      "one breast out",
-      "adjusting clothes",
-      "armpit cutout",
-      "back cutout",
-      "backless outfit",
-      "bikini bottom aside",
-      "bottomless",
-      "buruma aside",
-      "clothes down",
-      "clothing aside",
-      "completely nude",
-      "crotch cutout",
-      "downblouse",
-      "hip vent",
-      "hood down",
-      "leotard aside",
-      "naked apron",
-      "naked bandage",
-      "naked cape",
-      "naked cloak",
-      "naked coat",
-      "naked hoodie",
-      "naked jacket",
-      "naked overalls",
-      "naked kimono",
-      "naked sweater",
-      "naked ribbon",
-      "naked scarf",
-      "naked sheet",
-      "naked shirt",
-      "naked tabard",
-      "naked towel",
-      "navel cutout",
-      "nearly naked apron",
-      "no bra",
-      "no panties",
-      "no pants",
-      "no shirt",
-      "nude",
-      "nude cover",
-      "off shoulder",
-      "open clothes",
-      "panties aside",
-      "pussy peek",
-      "see-through",
-      "shoulder cutout",
-      "side cutout",
-      "side slit",
-      "sideless outfit",
-      "skirt around one leg",
-      "stomach cutout",
-      "strap slip",
-      "swimsuit aside",
-      "thigh cutout",
-      "topless",
-      "topless male",
-      "unbuttoned",
-      "underboob cutout",
-      "underwear only",
-      "undressing",
-      "unfastened",
-      "untied",
-      "untying",
-      "unzipped",
-      "unzipping",
-      "upskirt",
-      "wringing clothes",
-      "zettai ryouiki",
-      "accidental exposure",
-      "bare hips",
-      "bare pectorals"
-    ],
+    "nudity": {
+      "slip": [
+        "areola slip",
+        "wardrobe error",
+        "wardrobe malfunction",
+        "buruma aside",
+        "clothing aside",
+        "bikini bottom aside",
+        "panties aside",
+        "accidental exposure",
+        "swimsuit aside",
+        "leotard aside",
+        "breast slip",
+        "strap slip",
+        "nipple slip"
+      ],
+      "naked clothing": [
+        "nude cover",
+        "underwear only",
+        "naked apron",
+        "naked bandage",
+        "naked cape",
+        "naked cloak",
+        "naked coat",
+        "naked hoodie",
+        "naked jacket",
+        "naked overalls",
+        "naked kimono",
+        "naked sweater",
+        "naked ribbon",
+        "naked scarf",
+        "naked sheet",
+        "nearly naked apron",
+        "naked shirt",
+        "naked tabard",
+        "naked towel"
+      ],
+      "cutout": [
+        "sideless outfit",
+        "crotch cutout",
+        "navel cutout",
+        "hip vent",
+        "shoulder cutout",
+        "side cutout",
+        "side slit",
+        "stomach cutout",
+        "armpit cutout",
+        "back cutout",
+        "thigh cutout",
+        "backless outfit",
+        "underboob cutout"
+      ],
+      "undone clothing": [
+        "undressing",
+        "unbuttoned",
+        "unfastened",
+        "open clothes",
+        "untied",
+        "off shoulder",
+        "untying",
+        "unzipped",
+        "unzipping"
+      ],
+      "nude": [
+        "nude",
+        "topless",
+        "topless male",
+        "completely nude",
+        "bottomless"
+      ],
+      "other": [
+        "breasts out",
+        "one breast out",
+        "bursting breasts",
+        "clothes down",
+        "downblouse",
+        "no bra",
+        "no panties",
+        "no pants",
+        "no shirt",
+        "pussy peek",
+        "skirt around one leg",
+        "upskirt",
+        "bare hips",
+        "bare pectorals"
+      ]
+    },
     "sex act": {
       "voyeurism": [
         "flashing",
@@ -6092,6 +6100,8 @@
   "posture": {
     "action": {
       "main action": [
+        "wringing clothes",
+        "adjusting clothes",
         "aiming",
         "fleeing",
         "sitting in tree",
@@ -6301,25 +6311,33 @@
         "hug from behind",
         "object hug"
       ],
-      "clothes pull": [
+      "clothes lift": [
         "panty lift",
         "kimono lift",
         "sweater lift",
         "strap lift",
         "shirt lift",
         "skirt lift",
-        "bra lift",
-        "shirt tug",
-        "skirt tug",
         "hoodie lift",
-        "jacket pull",
+        "bra lift",
         "apron lift",
         "clothes lift",
+        "bikini lift",
+        "dress lift"
+      ],
+      "clothes tug": ["shirt tug", "skirt tug", "clothes tug", "dress tug"],
+      "clothes grab": [
         "shirt grab",
+        "neckwear grab",
+        "clothes grab",
+        "necktie grab",
+        "sleeve grab"
+      ],
+      "clothes pull": [
+        "jacket pull",
         "skirt pull",
         "bra pull",
         "bikini pull",
-        "neckwear grab",
         "kimono pull",
         "buruma pull",
         "leotard pull",
@@ -6331,15 +6349,8 @@
         "pantyhose pull",
         "shorts pull",
         "strap pull",
-        "clothes grab",
-        "sleeve grab",
-        "clothes tug",
         "clothes pull",
-        "bikini lift",
-        "necktie grab",
-        "dress lift",
         "pulling",
-        "dress tug",
         "dress pull"
       ],
       "tail action": [
@@ -6488,6 +6499,8 @@
     },
     "facial expression": {
       "base": [
+        "x3",
+        "xd",
         "o o",
         "+ +",
         ". .",
@@ -7001,7 +7014,12 @@
       "finger to mouth",
       "finger on trigger"
     ],
-    "breast": ["bouncing breasts", "breasts on glass", "breast rest"],
+    "breast": [
+      "bouncing breasts",
+      "breasts on glass",
+      "breasts on table",
+      "breast rest"
+    ],
     "other": [
       "under covers",
       "under kotatsu",
@@ -7011,7 +7029,6 @@
       "incoming gift",
       "shared clothes",
       "you gonna get raped",
-      "breasts on table",
       "between fingers",
       "between thighs",
       "between toes",
@@ -9168,10 +9185,7 @@
         "fighter jet",
         "jet",
         "airship",
-        "contrail",
-        "flight deck",
-        "helicopter",
-        "propeller"
+        "helicopter"
       ],
       "ground vehicle": [
         "bicycle",
@@ -9194,9 +9208,7 @@
         "sports car"
       ],
       "boat": [
-        "anchor",
         "battleship",
-        "rigging",
         "boat",
         "ship",
         "torpedo",
@@ -9205,10 +9217,11 @@
         "inflatable raft"
       ],
       "other": [
+        "rocket",
         "spacecraft",
+        "ufo",
         "military vehicle",
-        "variable fighter",
-        "abyssal ship"
+        "variable fighter"
       ]
     },
     "blood": [
@@ -9401,8 +9414,7 @@
         "white snake",
         "white tiger",
         "bat (animal)",
-        "crane (animal)",
-        "jellyfish"
+        "crane (animal)"
       ],
       "feathers": [
         "black feathers",
@@ -9425,6 +9437,7 @@
       ],
       "fish": [
         "goldfish",
+        "jellyfish",
         "fish",
         "squid",
         "starfish",
@@ -9509,7 +9522,6 @@
         "ballerina",
         "bride",
         "clown",
-        "cow boy",
         "dancer",
         "detective"
       ],
@@ -9551,6 +9563,9 @@
       "year of the tiger"
     ],
     "other": [
+      "anchor",
+      "flight deck",
+      "propeller",
       "clothed pokemon",
       "mega pokemon",
       "pokemon (creature)",
@@ -9613,7 +9628,6 @@
       "bad food",
       "danmaku",
       "food on body",
-      "ufo",
       "ball and chain restraint",
       "hungry",
       "picnic",
@@ -9798,6 +9812,7 @@
       "ink",
       "instant loss",
       "jirai kei",
+      "abyssal ship",
       "k/da (league of legends)",
       "keyhole",
       "keystone"
