@@ -90,7 +90,7 @@ class Interrogator:
             # print(tag_group)
             if isinstance(tag_group, bool):
                 if "other" not in associated_tag_groups:
-                    associated_tag_groups["other"] = [tag]
+                    associated_tag_groups["other"] = [{tag: 0}]
                 continue
 
             group_type: Union[dict, str] = tag_group
@@ -139,14 +139,15 @@ class Interrogator:
                     print(f"Tagging image: {file}")
                     try:
                         image = Image.open(os.path.join(root, file))
-                        image_tags = self.interrogate(
+                        rating_res, general_res, character_res = self.interrogate(
                             image, model, general_threshold, character_threshold, tags
                         )
-                        file_dict[file] = (
-                            os.path.join(root, file),
-                            image_tags[0],
-                            image_tags[1],
-                        )
+                        file_dict[file] = {
+                            "file_path": os.path.join(root, file),
+                            "rating": rating_res,
+                            "general": general_res,
+                            "character": character_res,
+                        }
                     except Exception:
                         continue
         else:
@@ -162,10 +163,15 @@ class Interrogator:
                 print(f"Tagging image: {file}")
                 try:
                     image = Image.open(os.path.join(image_folder, file))
-                    image_tags = self.interrogate(
+                    rating_res, general_res, character_res = self.interrogate(
                         image, model, general_threshold, character_threshold, tags
                     )
-                    file_dict[file] = image_tags
+                    file_dict[file] = {
+                        "file_path": os.path.join(image_folder, file),
+                        "rating": rating_res,
+                        "general": general_res,
+                        "character": character_res,
+                    }
                 except Exception:
                     continue
         return file_dict
@@ -212,10 +218,10 @@ class Interrogator:
 
         character_names = [labels[i] for i in character_indexes]
         character_res = [x for x in character_names if x[1] > character_threshold]
-        full_tags = dict(general_res + character_res)
-        full_tags = self.find_groups(full_tags)
+        # full_tags = dict(general_res + character_res)
+        # full_tags = self.find_groups(full_tags)
 
-        return rating_res, full_tags
+        return rating_res, general_res, character_res
 
 
 # TODO: decide if used?

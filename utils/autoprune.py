@@ -12,12 +12,15 @@ GROUP_PRUNE_LIST = ["solo", "1girl", "1boy", "1other"]
 
 
 def prune_tags(tag_group: Dict[str, Any]) -> Dict[str, Any]:
-    tag_group["image composition"]["group"] = [
-        sorted(tag_group["image composition"]["group"], key=sorted_func, reverse=True)[
-            0
+    if "image composition" in tag_group and "group" in tag_group["image composition"]:
+        tag_group["image composition"]["group"] = [
+            sorted(
+                tag_group["image composition"]["group"], key=sorted_func, reverse=True
+            )[0]
         ]
-    ]
-    dont_prune = tag_group["image composition"]["group"] not in GROUP_PRUNE_LIST
+        dont_prune = tag_group["image composition"]["group"] not in GROUP_PRUNE_LIST
+    else:
+        dont_prune = False
     return prune_tags_helper(tag_group, dont_prune=dont_prune)
 
 
@@ -54,9 +57,24 @@ def prune_tags_helper(
     return tag_group
 
 
+def prune_existing_tags(tag_group: dict, base_tag: str = None) -> dict:
+    for key in tag_group:
+        if isinstance(tag_group[key], dict):
+            prune_existing_tags(
+                tag_group[key], base_tag=base_tag if key == "base" else key
+            )
+        elif len(tag_group[key]) > 1:
+            tag_group[key] = handle_base_tag(tag_group[key], base_tag, key)
+    return tag_group
+
+
 def handle_base_tag(sorted_array: list, base_tag: str, current_key: str) -> list:
-    if base_tag in sorted_array[0] or current_key in sorted_array[0]:
-        sorted_array.pop(0)
+    i = 0
+    while i < len(sorted_array):
+        if base_tag in sorted_array[i] or current_key in sorted_array[i]:
+            sorted_array.pop(i)
+            break
+        i += 1
     return sorted_array
 
 
