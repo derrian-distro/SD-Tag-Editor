@@ -13,12 +13,20 @@ GROUP_PRUNE_LIST = ["solo", "1girl", "1boy", "1other"]
 
 def prune_tags(tag_group: Dict[str, Any]) -> Dict[str, Any]:
     if "image composition" in tag_group and "group" in tag_group["image composition"]:
-        tag_group["image composition"]["group"] = [
-            sorted(
-                tag_group["image composition"]["group"], key=sorted_func, reverse=True
-            )[0]
-        ]
-        dont_prune = tag_group["image composition"]["group"] not in GROUP_PRUNE_LIST
+        tag_group["image composition"]["group"] = sorted(
+            tag_group["image composition"]["group"], key=sorted_func, reverse=True
+        )
+        if len(tag_group["image composition"]["group"]) > 1:
+            tags = tag_group["image composition"]["group"]
+            dont_prune = next(iter(tags[0].keys())) in ["1girl", "1boy"] and next(
+                iter(tags[1].keys())
+            ) in ["1girl", "1boy"]
+            tag_group["image composition"]["group"] = tags[:2]
+        else:
+            dont_prune = (
+                next(iter(tag_group["image composition"]["group"][0].keys()))
+                not in GROUP_PRUNE_LIST
+            )
     else:
         dont_prune = False
     return prune_tags_helper(tag_group, dont_prune=dont_prune)
@@ -44,6 +52,8 @@ def prune_tags_helper(
             if top_level in {"attire", "body trait"} and dont_prune:
                 handle_base_tag(sorted_array, base_tag, key)
                 tag_group[key] = sorted_array
+                continue
+            if key == "group":
                 continue
             modifier = handle_priority(sorted_array, keep_array)
             for tag in sorted_array:

@@ -74,7 +74,7 @@ class Interrogator:
 
         def depth_search(tag: str, tag_group: Union[dict, list]):
             if not isinstance(tag_group, dict):
-                return tag in tag_group
+                return tag.lower() in tag_group
 
             for group in tag_group.keys():
                 if tag_found := depth_search(tag, tag_group[group]):
@@ -91,6 +91,8 @@ class Interrogator:
             if isinstance(tag_group, bool):
                 if "other" not in associated_tag_groups:
                     associated_tag_groups["other"] = [{tag: 0}]
+                else:
+                    associated_tag_groups["other"].append({tag: 0})
                 continue
 
             group_type: Union[dict, str] = tag_group
@@ -222,14 +224,3 @@ class Interrogator:
         # full_tags = self.find_groups(full_tags)
 
         return rating_res, general_res, character_res
-
-
-# TODO: decide if used?
-def tag(probs: list, tag_names: list[str]):
-    """
-    Creates a dict of tags and their probabilities.
-
-    probs: list of probabilities
-    tag_names: list of tag names
-    """
-    return dict(zip(tag_names, probs[0].astype(float)))
