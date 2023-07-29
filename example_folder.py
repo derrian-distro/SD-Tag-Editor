@@ -30,7 +30,7 @@ def main():
     for key, value in image_tags.items():
         # convert to a dict because it is assumed to be {"tag": confidence}
         # and the default outputs are tuples
-        tag_tree = inter.find_groups(dict(value["general"] + value["character"]))
+        tag_tree = inter.find_groups(value["general"] + value["character"])
         image_tags[key] = {
             "file_path": value["file_path"],
             "rating": value["rating"],
