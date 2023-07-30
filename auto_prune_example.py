@@ -14,7 +14,7 @@ def main():
         image_folder=tag_folder.resolve(),
         general_threshold=0.35,
         character_threshold=0.75,
-        subfolders=True,
+        subfolders=False,
     )
     for image in tagged_images.keys():
         new_path = pathlib.Path(tagged_images[image]["file_path"]).with_suffix(".txt")

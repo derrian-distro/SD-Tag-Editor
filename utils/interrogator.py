@@ -22,9 +22,9 @@ class Interrogator:
         model: str = "swin",
     ) -> None:
         self.model_repos_and_names = model_repo_and_name
-        if not os.path.exists(label_file_path):
-            self.label_file_path = "selected_tags.csv"
-        self.label_file_path = label_file_path
+        if not Path(label_file_path).exists():
+            label_file_path = "selected_tags.csv"
+        self.label_file_path = Path(label_file_path)
         self.tag_groups = json.load(open("tag_groups.json"))
         self.model = self._load_model(model)
         self.labels = self._load_labels()
@@ -57,9 +57,9 @@ class Interrogator:
         )
 
     def _load_labels(self) -> tuple[Any, list[Any], list[Any], list[Any]]:
-        if not os.path.exists(self.label_file_path):
+        if not self.label_file_path.exists():
             raise FileNotFoundError("Failed to find the label file.")
-        df = pd.read_csv(self.label_file_path)
+        df = pd.read_csv(str(self.label_file_path))
         tag_names = df["name"].tolist()
         rating_indexes = list(np.where(df["category"] == 9)[0])
         character_indexes = list(np.where(df["category"] == 4)[0])
@@ -122,20 +122,21 @@ class Interrogator:
         character_threshold: float = 0.75,
         subfolders: bool = False,
     ):
-        if not os.path.exists(image_folder):
+        image_folder: Path = Path(image_folder)
+        if not image_folder.exists():
             raise FileNotFoundError("Unable to find an image folder")
         file_dict = {}
         if subfolders:
-            for root, _, files in os.walk(image_folder):
-                for file in files:
-                    if tags := self.tag_image(
-                        os.path.join(root, file), general_threshold, character_threshold
-                    ):
-                        file_dict[os.path.join(root, file)] = tags
+            files = list(self.walk(image_folder))
+            for file in files:
+                if tags := self.tag_image(file, general_threshold, character_threshold):
+                    file_dict[file] = tags
         else:
-            for file in os.listdir(image_folder):
+            for file in image_folder.iterdir():
+                if file.is_dir():
+                    continue
                 if tags := self.tag_image(
-                    os.path.join(image_folder, file),
+                    file,
                     general_threshold,
                     character_threshold,
                 ):
@@ -144,11 +145,11 @@ class Interrogator:
 
     def tag_image(
         self,
-        file_path: str,
+        file_path: Path,
         general_threshold: float = 0.35,
         character_threshold: float = 0.75,
     ) -> Union[dict[str, Any], None]:
-        if os.path.splitext(file_path)[1].lower() not in [
+        if file_path.suffix.lower() not in [
             ".png",
             ".jpg",
             ".jpeg",
@@ -156,14 +157,14 @@ class Interrogator:
             ".gif",
         ]:
             return None
-        print(f"tagging image: {os.path.split(file_path)[1]}")
+        print(f"tagging image: {file_path.name}")
         try:
             image = Image.open(file_path)
             rating_res, general_res, character_res = self.interrogate(
                 image, self.model, general_threshold, character_threshold, self.labels
             )
             return {
-                "file_path": file_path,
+                "file_path": str(file_path),
                 "rating": rating_res,
                 "general": dict(general_res),
                 "character": dict(character_res),
@@ -217,3 +218,19 @@ class Interrogator:
         # full_tags = self.find_groups(full_tags)
 
         return rating_res, general_res, character_res
+
+    def walk(self, path: Path):
+        for p in path.iterdir():
+            if p.is_dir():
+                yield from self.walk(p)
+                continue
+            yield p.resolve()
+
+
+# if os.path.splitext(str(file_path))[1].lower() not in [
+#     ".png",
+#     ".jpg",
+#     ".jpeg",
+#     ".webp",
+#     ".gif",
+# ]:
