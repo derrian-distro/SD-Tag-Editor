@@ -14,11 +14,12 @@ def main():
         image_folder=tag_folder.resolve(),
         general_threshold=0.35,
         character_threshold=0.75,
-        subfolders=False,
+        subfolders=True,
     )
     for image in tagged_images.keys():
         new_path = pathlib.Path(tagged_images[image]["file_path"]).with_suffix(".txt")
         print(f"writing tags to: {new_path}")
+        tagged_images[image]["general"].update(tagged_images[image]["character"])
         tags = convert_to_tag_list(
             prune_tags(inter.find_groups(tagged_images[image]["general"]))
         )

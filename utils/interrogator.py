@@ -5,8 +5,8 @@ import os
 import onnxruntime as ort
 import json
 
+from huggingface_hub import hf_hub_download
 
-from huggingface_hub.file_download import hf_hub_download
 from PIL import Image
 from typing import Any, Union
 from utils import dbimutils

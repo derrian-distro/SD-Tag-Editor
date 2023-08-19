@@ -1,4 +1,4 @@
 @echo off
 call .\venv\Scripts\activate
-python example_folder.py
+python auto_prune_example.py
 pause
