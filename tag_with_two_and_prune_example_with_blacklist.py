@@ -1,5 +1,5 @@
 from utils.autoprune import prune_tags
-from utils.interrogator import Interrogator
+from utils.interrogator import Interrogator, remove_blacklist_tags
 from pathlib import Path
 import json
 
@@ -12,6 +12,14 @@ def main():
     tag_folder = Path(input("folder to tag: "))
     if not tag_folder.exists():
         exit()
+    if blacklist_tags := Path(
+        input("Path to txt file containing a comma separated tag list to blacklist: ")
+    ):
+        blacklist_tags = (
+            blacklist_tags.open(encoding="utf-8").read().strip().split(", ")
+        )
+    else:
+        blacklist_tags = []
     tagged_images_swin = inter_swin.interrogate_folder(
         image_folder=tag_folder.resolve(),
         general_threshold=0.35,
@@ -38,7 +46,7 @@ def main():
         tags = convert_to_tag_list(
             prune_tags(inter_swin.find_groups(tagged_images_swin[image]["general"]))
         )
-
+        tags = remove_blacklist_tags(blacklist_tags, tags)
         with new_path.open("w", encoding="utf-8") as f:
             f.write(", ".join(tags))
 

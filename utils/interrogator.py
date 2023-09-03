@@ -52,9 +52,7 @@ class Interrogator:
             )
         )
 
-        return ort.InferenceSession(
-            str(path), providers=["CUDAExecutionProvider", "CPUExecutionProvider"]
-        )
+        return ort.InferenceSession(str(path), providers=["CUDAExecutionProvider"])
 
     def _load_labels(self) -> tuple[Any, list[Any], list[Any], list[Any]]:
         if not self.label_file_path.exists():
@@ -225,6 +223,13 @@ class Interrogator:
                 yield from self.walk(p)
                 continue
             yield p.resolve()
+
+
+def remove_blacklist_tags(black_list: list[str], tag_list: list[str]) -> dict:
+    for tag in black_list:
+        if tag in tag_list:
+            tag_list.remove(tag)
+    return tag_list
 
 
 # if os.path.splitext(str(file_path))[1].lower() not in [
