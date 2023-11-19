@@ -1,4 +1,3 @@
-import torch  # ?
 import pandas as pd
 import numpy as np
 import os
@@ -92,7 +91,13 @@ class Interrogator:
                 if "other" not in associated_tag_groups:
                     associated_tag_groups["other"] = [{tag: 0}]
                 else:
-                    associated_tag_groups["other"].append({tag: 0})
+                    if isinstance(associated_tag_groups["other"], dict):
+                        if "other" in associated_tag_groups["other"]:
+                            associated_tag_groups["other"]["other"].append({tag: 0})
+                        else:
+                            associated_tag_groups["other"]["other"] = [{tag: 0}]
+                    else:
+                        associated_tag_groups["other"].append({tag: 0})
                 continue
 
             group_type: Union[dict, str] = tag_group

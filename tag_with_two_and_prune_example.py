@@ -1,7 +1,6 @@
 from utils.autoprune import prune_tags
 from utils.interrogator import Interrogator
 from pathlib import Path
-import json
 
 from utils.jsonmanip import convert_to_tag_list
 
@@ -9,7 +8,7 @@ from utils.jsonmanip import convert_to_tag_list
 def main():
     inter_swin = Interrogator(model="swin")
     inter_conv = Interrogator(model="conv")
-    tag_folder = Path(input("folder to tag: "))
+    tag_folder = Path(input("folder to tag: ").strip(' "'))
     if not tag_folder.exists():
         exit()
     tagged_images_swin = inter_swin.interrogate_folder(
