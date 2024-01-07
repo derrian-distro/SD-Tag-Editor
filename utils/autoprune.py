@@ -91,7 +91,7 @@ def handle_base_tag(sorted_array: list, base_tag: str, current_key: str) -> list
 def handle_priority(sorted_array: list, keep_array: list) -> int:
     priority = 0
     modifier = 0
-    while "priority" in sorted_array[0]:
+    while len(sorted_array) > 0 and "priority" in sorted_array[0]:
         if sorted_array[0]["priority"] <= priority:
             sorted_array.pop(0)
             continue
