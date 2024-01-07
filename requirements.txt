@@ -1,8 +1,9 @@
-PySide6==6.5.0
-qt-material==2.14
-onnxruntime-gpu
+--extra-index-url=https://download.pytorch.org/whl/cu118
 huggingface-hub==0.15.1
-pillow==9.5.0
 numpy
-pandas
+onnxruntime-gpu
 opencv-contrib-python
+pandas
+pillow==9.5.0
+torch
+torchvision
