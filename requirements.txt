@@ -1,7 +1,7 @@
 --extra-index-url=https://download.pytorch.org/whl/cu118
 huggingface-hub==0.15.1
 numpy
-onnxruntime-gpu
+onnxruntime-gpu==1.16.3
 opencv-contrib-python
 pandas
 pillow==9.5.0
