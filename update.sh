@@ -4,6 +4,7 @@ if [ -d "venv" ]; then
     source venv/bin/activate
 else
     echo "Installation not found. Installing..."
+    chmod +x install.sh
     ./install.sh no_pause
     read -p "Press enter to continue..."
     deactivate

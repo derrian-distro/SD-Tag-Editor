@@ -3,6 +3,7 @@
 if [ -d "venv" ]; then
     source venv/bin/activate
 else
+    chmod +x install.sh
     ./install.sh no_pause
     source venv/bin/activate
 fi
