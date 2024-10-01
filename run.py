@@ -7,7 +7,6 @@ from tag_tree_functions import flatten_tags, load_groups, GroupTree, prune
 
 import numpy as np
 import pandas as pd
-import timm
 import torch
 from huggingface_hub import hf_hub_download
 from huggingface_hub.utils import HfHubHTTPError
@@ -16,6 +15,7 @@ from simple_parsing import field, parse_known_args
 from timm.data import create_transform, resolve_data_config
 from torch import Tensor, nn
 from torch.nn import functional as F
+import timm
 import tqdm
 
 torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -25,6 +25,20 @@ MODEL_REPO_MAP = {
     "swinv2": "SmilingWolf/wd-swinv2-tagger-v3",
     "convnext": "SmilingWolf/wd-convnext-tagger-v3",
 }
+
+
+def list_files(path: Path) -> list[Path]:
+    folders = [path]
+    files = []
+
+    while folders:
+        folder = folders.pop(0)
+        for file in folder.iterdir():
+            if file.is_dir():
+                folders.append(file)
+                continue
+            files.append(file)
+    return files
 
 
 def pil_ensure_rgb(image: Image.Image) -> Image.Image:
@@ -55,6 +69,13 @@ class LabelData:
     rating: list[np.int64]
     general: list[np.int64]
     character: list[np.int64]
+
+
+def load_model_hf(repo_id: str) -> nn.Module:
+    model: nn.Module = timm.create_model(f"hf-hub:{repo_id}").eval()
+    state_dict = timm.models.load_state_dict_from_hf(repo_id)
+    model.load_state_dict(state_dict)
+    return model
 
 
 def load_labels_hf(
@@ -107,11 +128,10 @@ def get_tags(
     char_labels = dict([x for x in char_labels if x[1] > char_threshold])
     char_labels = dict(sorted(char_labels.items(), key=lambda item: item[1], reverse=True))
 
-    # Combine general and character labels, sort by confidence
-    combined_names = list(gen_labels)
-    combined_names.extend(list(char_labels))
+    # rating labels
+    rating_labels = dict([probs[i] for i in labels.rating])
 
-    return char_labels, gen_labels
+    return char_labels, gen_labels, rating_labels
 
 
 @dataclass
@@ -124,45 +144,72 @@ class ScriptOptions:
     subfolder: bool = field(default=False)
 
 
-def main(opts: ScriptOptions):
-    repo_id = MODEL_REPO_MAP.get(opts.model)
-    image_path = Path(
-        opts.image_or_images.strip(' "')
-        if opts.image_or_images != "NO_INPUT"
-        else input("Input Folder or Image: ").strip(' "')
-    ).resolve()
-    if not image_path.exists():
+def prepare_inputs(model: str, image_or_images: str) -> tuple[str | None, Path | None]:
+    repo_id = MODEL_REPO_MAP.get(model)
+    image_path = Path(image_or_images.strip(' "'))
+    if image_path.name == "NO_INPUT":
         image_path = Path(input("Input folder or image: ").strip(' "'))
-    images = []
-    if image_path.is_dir():
-        if opts.subfolder:
-            temp = image_path.rglob("*.*")
-        else:
-            temp = [x for x in image_path.iterdir() if x.is_file()]
-        for file in temp:
-            try:
-                Image.open(file)
-                images.append(file)
-            except UnidentifiedImageError:
-                continue
-    elif image_path.is_file():
+    return repo_id, image_path
+
+
+def load_images(image_path: Path, subfolder: bool) -> list[Path]:
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image or Folder not found: {image_path}")
+    if image_path.is_file():
         try:
             Image.open(image_path)
-            images = [image_path]
-        except UnidentifiedImageError:
-            print("unidentified image, quitting")
-            quit()
-    else:
-        raise FileNotFoundError(f"Image file or folder not found: {image_path}")
-    batches: list[list[Path]] = []
-    for _ in range(math.ceil(len(images) / opts.batch_size)):
-        batches.append(images[: opts.batch_size])
-        images = images[opts.batch_size :]
+            return [image_path]
+        except UnidentifiedImageError as e:
+            raise UnidentifiedImageError(f"Unknown File Type of image: {image_path}") from e
 
-    print(f"Loading model '{opts.model}' from '{repo_id}'...")
-    model: nn.Module = timm.create_model("hf-hub:" + repo_id).eval()
-    state_dict = timm.models.load_state_dict_from_hf(repo_id)
-    model.load_state_dict(state_dict)
+    images: list[Path] = []
+    if subfolder:
+        temp = list_files(image_path)
+        # temp = image_path.rglob("*.*")
+    else:
+        temp = [x for x in image_path.iterdir() if x.is_file()]
+
+    for file in temp:
+        try:
+            Image.open(file)
+            images.append(file)
+        except UnidentifiedImageError:
+            continue
+    return images
+
+
+def create_batches(images: list[Path], batch_size: int = 1) -> list[list[Path]]:
+    batches: list[list[Path]] = []
+    for _ in range(math.ceil(len(images) / batch_size)):
+        batches.append(images[:batch_size])
+        images = images[batch_size:]
+    return batches
+
+
+def run_model(model: nn.Module, transform, batch: list[Path]) -> list[torch.Tensor]:
+    img_inputs = process_batch(batch, transform)
+    with torch.inference_mode():
+        if torch.device.type != "cpu":
+            model = model.to(torch_device)
+            img_inputs = img_inputs.to(torch_device)
+        outputs = model.forward(img_inputs)
+        outputs = F.sigmoid(outputs)
+        if torch.device.type != "cpu":
+            img_inputs = img_inputs.to("cpu")
+            outputs = outputs.to("cpu")
+            model = model.to("cpu")
+        outputs = torch.unbind(outputs, dim=0)
+    return outputs
+
+
+def setup(
+    model: str, image_or_images: str, subfolder: bool, batch_size: int
+) -> tuple[list[list[Path]], nn.Module, LabelData, any, GroupTree]:
+    repo_id, image_path = prepare_inputs(model, image_or_images)
+    batches = create_batches(load_images(image_path, subfolder), batch_size)
+
+    print(f"Loading model '{model}' from '{repo_id}'...")
+    model = load_model_hf(repo_id)
 
     print("Loading tag list...")
     labels: LabelData = load_labels_hf(repo_id=repo_id)
@@ -172,30 +219,25 @@ def main(opts: ScriptOptions):
 
     print("Loading prune tag groups...")
     group_tree: GroupTree = load_groups()
+    return batches, model, labels, transform, group_tree
+
+
+def main(opts: ScriptOptions):
+    batches, model, labels, transform, group_tree = setup(
+        opts.model, opts.image_or_images, opts.subfolder, opts.batch_size
+    )
 
     for batch in tqdm.tqdm(batches):
         batch: list[Path]
-        img_inputs = process_batch(batch, transform)
-        with torch.inference_mode():
-            if torch.device.type != "cpu":
-                model = model.to(torch_device)
-                img_inputs = img_inputs.to(torch_device)
-            outputs = model.forward(img_inputs)
-            outputs = F.sigmoid(outputs)
-            if torch.device.type != "cpu":
-                img_inputs = img_inputs.to("cpu")
-                outputs = outputs.to("cpu")
-                model = model.to("cpu")
-        outputs = torch.unbind(outputs, dim=0)
+        outputs = run_model(model, transform, batch)
         for i, img in enumerate(outputs):
-            char_labels, gen_labels = get_tags(
+            char_labels, gen_labels, _ = get_tags(
                 probs=img, labels=labels, gen_threshold=opts.gen_threshold, char_threshold=opts.char_threshold
             )
             pruned = flatten_tags(prune(group_tree, {str(x): float(y) for x, y in gen_labels.items()}), True)
-            pruned.extend([(str(x), float(y)) for x, y in char_labels.items()])
-            pruned = [x[0] for x in sorted(pruned, key=lambda item: item[1], reverse=True)]
-            pruned = ", ".join(pruned).replace("_", " ")
-            batch[i].with_suffix(".txt").write_text(pruned)
+            pruned = [x[0] for x in sorted(pruned, key=lambda x: x[1], reverse=True)]
+            pruned = ", ".join([str(x) for x in char_labels] + pruned)
+            batch[i].with_suffix(".txt").write_text(pruned, encoding="utf-8")
 
 
 if __name__ == "__main__":
