@@ -138,10 +138,12 @@ def get_tags(
 class ScriptOptions:
     image_or_images: str = field(positional=True, default="NO_INPUT")
     batch_size: int = field(default=1)
-    model: str = field(default="vit")
+    model: str = field(default="vit-large")
     gen_threshold: float = field(default=0.35)
     char_threshold: float = field(default=0.75)
     subfolder: bool = field(default=False)
+    noUnderscores: bool = field(default=True)
+    sortAlphabetically: bool = field(default=False)
 
 
 def prepare_inputs(model: str, image_or_images: str) -> tuple[str | None, Path | None]:
@@ -165,7 +167,6 @@ def load_images(image_path: Path, subfolder: bool) -> list[Path]:
     images: list[Path] = []
     if subfolder:
         temp = list_files(image_path)
-        # temp = image_path.rglob("*.*")
     else:
         temp = [x for x in image_path.iterdir() if x.is_file()]
 
@@ -235,7 +236,12 @@ def main(opts: ScriptOptions):
                 probs=img, labels=labels, gen_threshold=opts.gen_threshold, char_threshold=opts.char_threshold
             )
             pruned = flatten_tags(prune(group_tree, {str(x): float(y) for x, y in gen_labels.items()}), True)
-            pruned = [x[0] for x in sorted(pruned, key=lambda x: x[1], reverse=True)]
+            pruned = [
+                x[0].replace("_", " ") if opts.noUnderscores else x[0]
+                for x in sorted(pruned, key=lambda x: x[1], reverse=True)
+            ]
+            if opts.sortAlphabetically:
+                pruned = sorted(pruned)
             pruned = ", ".join([str(x) for x in char_labels] + pruned)
             batch[i].with_suffix(".txt").write_text(pruned, encoding="utf-8")
 

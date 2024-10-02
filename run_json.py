@@ -48,9 +48,9 @@ def main():
             if js.is_file():
                 data = orjson.loads(js.read_bytes())
                 for x in data["character"]:
-                    char[x] = (char[x] + 0.75) / 2 if x in char else 0.75
+                    char[x] = (char.get(x, 0.75) + 0.75) / 2
                 for x in data["general"]:
-                    gen[x] = (gen[x] + 0.75) / 2 if x in char else 0.75
+                    gen[x] = (gen.get(x, 0.75) + 0.75) / 2
                 artist = data["artist"]
             item = process_tags(
                 group_tree=group_tree, char_labels=char, gen_labels=gen, artists=artist, ratings=rating
