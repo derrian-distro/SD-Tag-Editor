@@ -1,13 +1,13 @@
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from tag_tree_functions import flatten_tags, load_groups, GroupTree, prune
-
 import numpy as np
 import pandas as pd
+import timm
 import torch
+import tqdm
 from huggingface_hub import hf_hub_download
 from huggingface_hub.utils import HfHubHTTPError
 from PIL import Image, UnidentifiedImageError
@@ -15,8 +15,8 @@ from simple_parsing import field, parse_known_args
 from timm.data import create_transform, resolve_data_config
 from torch import Tensor, nn
 from torch.nn import functional as F
-import timm
-import tqdm
+
+from tag_tree_functions import GroupTree, flatten_tags, load_groups, prune
 
 torch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_REPO_MAP = {
@@ -24,6 +24,7 @@ MODEL_REPO_MAP = {
     "vit-large": "SmilingWolf/wd-vit-large-tagger-v3",
     "swinv2": "SmilingWolf/wd-swinv2-tagger-v3",
     "convnext": "SmilingWolf/wd-convnext-tagger-v3",
+    "eva02": "SmilingWolf/wd-eva02-large-tagger-v3",
 }
 
 
@@ -84,9 +85,7 @@ def load_labels_hf(
     token: Optional[str] = None,
 ) -> LabelData:
     try:
-        csv_path = hf_hub_download(
-            repo_id=repo_id, filename="selected_tags.csv", revision=revision, token=token
-        )
+        csv_path = hf_hub_download(repo_id=repo_id, filename="selected_tags.csv", revision=revision, token=token)
         csv_path = Path(csv_path).resolve()
     except HfHubHTTPError as e:
         raise FileNotFoundError(f"selected_tags.csv failed to download from {repo_id}") from e
