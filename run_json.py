@@ -1,9 +1,12 @@
 from dataclasses import dataclass, field
-from run import get_tags, run_model, setup
-from tag_tree_functions import flatten_tags, prune, GroupTree
 from pathlib import Path
-from tqdm import tqdm
+
 import orjson
+from simple_parsing import parse_known_args
+from tqdm import tqdm
+
+from run import MODEL_REPO_MAP, ScriptOptions, get_tags, run_model, setup
+from tag_tree_functions import GroupTree, flatten_tags, prune
 
 
 @dataclass
@@ -34,23 +37,25 @@ def process_tags(
     )
 
 
-def main():
+def main(opts: ScriptOptions):
     batches, model, labels, transform, group_tree = setup(
-        model="vit-large", image_or_images=input("in: ").strip('" '), subfolder=True, batch_size=500
+        opts.model, opts.image_or_images, opts.subfolder, opts.batch_size
     )
     for batch in tqdm(batches):
         batch: list[Path]
         outputs = run_model(model, transform, batch)
         for i, img in enumerate(outputs):
             js = batch[i].with_suffix(".json")
-            char, gen, rating = get_tags(probs=img, labels=labels, gen_threshold=0.35, char_threshold=0.75)
+            char, gen, rating = get_tags(
+                probs=img, labels=labels, gen_threshold=opts.gen_threshold, char_threshold=opts.char_threshold
+            )
             artist = []
             if js.is_file():
                 data = orjson.loads(js.read_bytes())
                 for x in data["character"]:
-                    char[x] = (char.get(x, 0.75) + 0.75) / 2
+                    char[x] = (char.get(x, opts.char_threshold) + opts.char_threshold) / 2
                 for x in data["general"]:
-                    gen[x] = (gen.get(x, 0.75) + 0.75) / 2
+                    gen[x] = (gen.get(x, opts.gen_threshold) + opts.gen_threshold) / 2
                 artist = data["artist"]
             item = process_tags(
                 group_tree=group_tree, char_labels=char, gen_labels=gen, artists=artist, ratings=rating
@@ -59,4 +64,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    opts, _ = parse_known_args(ScriptOptions)
+    if opts.model not in MODEL_REPO_MAP:
+        print(f"Available models: {list(MODEL_REPO_MAP.keys())}")
+        raise ValueError(f"Unknown model name '{opts.model}'")
+    main(opts)

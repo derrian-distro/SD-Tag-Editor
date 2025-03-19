@@ -1,4 +1,6 @@
 import json
+import os
+import sys
 from collections import UserDict
 from enum import Enum
 from pathlib import Path
@@ -142,14 +144,33 @@ class ScoredGroupTree(RootModel, UserDict):
         return self.root.values()
 
 
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 def load_groups(fpath: Optional[Path] = "tag_groups.json") -> GroupTree:
-    fpath = Path(fpath).resolve()
-    if fpath.suffix.lower() != ".json":
-        raise ValueError(f"Invalid filetype for tag groups: {fpath.suffix} (expected .json)")
-    if fpath.is_file():
-        return GroupTree.model_validate_json(fpath.resolve().read_text(encoding="utf-8"))
-    else:
-        raise FileNotFoundError(f"Could not find tag groups file at {fpath}")
+    # Try multiple locations for the file
+    possible_paths = [
+        Path(fpath).resolve(),  # Original path
+        Path(get_resource_path(fpath)).resolve(),  # PyInstaller path
+        work_dir / fpath,  # Relative to script directory
+        Path.cwd() / fpath,  # Relative to current working directory
+    ]
+
+    for path in possible_paths:
+        if path.is_file():
+            return GroupTree.model_validate_json(path.read_text(encoding="utf-8"))
+
+    raise FileNotFoundError(
+        f"Could not find tag groups file. Searched in: {[str(p) for p in possible_paths]}"
+    )
 
 
 def traverse_tag_tree(groups: GroupTree, tag: ScoredTag) -> tuple[str, str, str | None]:
@@ -331,7 +352,7 @@ def main(debug: bool = True):
     input_dir = work_dir.joinpath("inputs")
     output_dir = work_dir.joinpath("pruned")
 
-    group_tree: GroupTree = load_groups(work_dir / groups_filename)
+    group_tree: GroupTree = load_groups(get_resource_path(groups_filename))
 
     input_files = [x for x in input_dir.iterdir() if x.suffix.lower() == ".json"]
     for tfile in input_files:
