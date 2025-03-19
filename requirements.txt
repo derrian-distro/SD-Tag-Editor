@@ -1,9 +1,10 @@
---extra-index-url=https://download.pytorch.org/whl/cu118
-huggingface-hub
-numpy<2.0.0
-onnxruntime-gpu
-opencv-contrib-python
-pandas
-pillow==9.5.0
+pydantic==2.7.1
+timm
+pillow
 torch
 torchvision
+huggingface-hub
+numpy==1.26.4
+simple_parsing
+pandas
+orjson
