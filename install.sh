@@ -10,7 +10,7 @@ source venv/bin/activate
 
 read -p "Are you using an Nvidia GPU? (Y/N): " answer
 if [[ $answer == [Yy]* ]]; then
-    pip install -r requirements.txt --extra-index-url=https://download.pytorch.org/whl/cu121
+    pip install -r requirements.txt --extra-index-url=https://download.pytorch.org/whl/cu128
     echo "gpu=true" > config.txt
 else
     pip install -r requirements.txt
